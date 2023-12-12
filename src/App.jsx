@@ -5,6 +5,7 @@ import Main from './components/Main.jsx';
 import Loader from './components/Loader.jsx';
 import Error from './components/Error.jsx';
 import StartScreen from './components/StartScreen.jsx';
+import Question from './components/Question.jsx';
 
 const initialState = {
   questions: [],
@@ -12,7 +13,7 @@ const initialState = {
 }
 
 const reducer = (state, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case 'dataReceived':
       return {
         ...state,
@@ -23,15 +24,20 @@ const reducer = (state, action) => {
       return {
         ...state,
         status: 'error'
-      }
-      default:
-        throw new Error('Invalid Action');
+      };
+    case "start":
+      return {
+        ...state,
+        status: "active"
+      };
+    default:
+      throw new Error('Invalid Action');
   }
 }
 
 function App() {
 
-  const [{questions, status}, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
 
   const numQuestions = questions.length
 
@@ -40,8 +46,8 @@ function App() {
     const getQuestions = () => {
       fetch('http://localhost:8000/questions')
         .then((res) => res.json())
-        .then(data => dispatch({type: 'dataReceived', payload: data}))
-        .catch(err => dispatch({type: 'dataFailed'}))
+        .then(data => dispatch({ type: 'dataReceived', payload: data }))
+        .catch(err => dispatch({ type: 'dataFailed' }))
     }
 
     getQuestions()
@@ -54,7 +60,8 @@ function App() {
       <Main>
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
-        {status === 'ready' && <StartScreen numQuestions={numQuestions}/>}
+        {status === 'ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
+        {status === 'active' && <Question />}
       </Main>
     </div>
   )
