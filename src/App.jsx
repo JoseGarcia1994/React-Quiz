@@ -10,7 +10,9 @@ import Question from './components/Question.jsx';
 const initialState = {
   questions: [],
   status: 'loading',
-  index: 0
+  index: 0,
+  answer: null, 
+  points: 0
 }
 
 const reducer = (state, action) => {
@@ -31,6 +33,13 @@ const reducer = (state, action) => {
         ...state,
         status: "active"
       };
+    case "newAnswer":
+      const question = state.questions.at(state.index)
+      return {
+        ...state,
+        answer: action.payload,
+        points: action.payload === question.correctOption ? state.points + question.points : state.points
+      };
     default:
       throw new Error('Invalid Action');
   }
@@ -38,7 +47,7 @@ const reducer = (state, action) => {
 
 function App() {
 
-  const [{ questions, status, index }, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status, index, answer }, dispatch] = useReducer(reducer, initialState);
 
   const numQuestions = questions.length
 
@@ -62,7 +71,13 @@ function App() {
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
         {status === 'ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
-        {status === 'active' && <Question question={questions[index]}/>}
+        {status === 'active' &&
+          <Question
+            question={questions[index]}
+            dispatch={dispatch}
+            answer={answer}
+          />
+        }
       </Main>
     </div>
   )
