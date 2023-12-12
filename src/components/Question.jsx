@@ -1,8 +1,11 @@
+import Options from "./Options.jsx";
 
-const Question = () => {
+const Question = ({question}) => {
   return (
     <div>
-      Question
+      <h3>{question.question}</h3>
+
+      <Options question={question}/>
     </div>
   );
 };
