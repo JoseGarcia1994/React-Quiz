@@ -55,6 +55,14 @@ const reducer = (state, action) => {
         ...state,
         status: 'finished',
         highscore: state.points > state.highscore ? state.points : state.highscore
+      };
+    case 'restartQuiz':
+      return {
+        ...state,
+        status: "ready",
+        index: 0, 
+        points: 0,
+        answer: null
       }
     default:
       throw new Error('Invalid Action');
@@ -111,7 +119,14 @@ function App() {
             />
           </>
         }
-        {status === 'finished' && <FinishedScreen points={points} maxPoints={maxPoints} highscore={highscore}/>}
+        {status === 'finished' && 
+          <FinishedScreen 
+            points={points} 
+            maxPoints={maxPoints} 
+            highscore={highscore}
+            dispatch={dispatch}
+          />
+        }
       </Main>
     </div>
   )
